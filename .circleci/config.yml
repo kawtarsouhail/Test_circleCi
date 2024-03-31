@@ -23,7 +23,8 @@ jobs:
           command: |
             sonar-scanner -h \
               -Dsonar.projectKey=Test_circleCi \
-              -Dsonar.sources=.
+              -Dsonar.sources=. \
+              -Dsonar.host.url=http://localhost:9000 
 
 workflows:
   build_test:
