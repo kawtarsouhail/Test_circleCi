@@ -1,53 +1,30 @@
 version: 2.1
-
 jobs:
-  build:
+  build_test:
     docker:
-      - image: circleci/node:16
-    steps:
-      - checkout
-
-  deploy-test:
-    docker:
-      - image: circleci/node:16
+      - image: circleci/node:12
     steps:
       - checkout
       - run:
-          name: Deploy to Test Environment
+          name: Install npm dependencies
           command: |
-            echo "Deploying to Test Environment..."
-
-  deploy-staging:
+            npm install --save	
+  build_docker_image:
     docker:
-      - image: circleci/node:16
+      - image: circleci/node:12
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: false
       - run:
-          name: Deploy to Staging Environment
+          name: Build Docker image
           command: |
-            echo "Deploying to Staging Environment..."
-
-  deploy-production:
-    docker:
-      - image: circleci/node:16
-    steps:
-      - checkout
-      - run:
-          name: Deploy to Production Environment
-          command: |
-            echo "Deploying to Production Environment..."
+            docker build -t test_circleci -t kawtar2004/test_circleci:latest .
+            echo $DOCKER_PASSWORD | docker login -u kawtar2004 --password-stdin
+            docker push kawtar2004/test:latest
 
 workflows:
-  version: 2
-  deploy:
+  build_test:
     jobs:
-      - build
-      - deploy-test:
-          requires:
-            - build
-      - deploy-staging:
-          requires:
-            - deploy-test
-      - deploy-production:
-          requires:
-            - deploy-staging
+      - build_test
+      - build_docker_image
