@@ -3,42 +3,38 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/node:13
+      - image: circleci/node:18
     steps:
       - checkout
-      # Étapes de construction de l'application
 
   deploy-test:
     docker:
-      - image: circleci/node:13
+      - image: circleci/node:18
     steps:
       - checkout
       - run:
           name: Deploy to Test Environment
           command: |
-            # Étapes de déploiement vers l'environnement de test
             echo "Deploying to Test Environment..."
 
   deploy-staging:
     docker:
-      - image: circleci/node:13
+      - image: circleci/node:18
     steps:
       - checkout
       - run:
           name: Deploy to Staging Environment
           command: |
-            # Étapes de déploiement vers l'environnement de staging
             echo "Deploying to Staging Environment..."
 
   deploy-production:
     docker:
-      - image: circleci/node:13
+      - image: circleci/node:18
     steps:
       - checkout
       - run:
           name: Deploy to Production Environment
           command: |
-            # Étapes de déploiement vers l'environnement de production
             echo "Deploying to Production Environment..."
 
 workflows:
