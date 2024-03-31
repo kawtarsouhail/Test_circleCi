@@ -7,7 +7,7 @@ jobs:
   # Job pour scanner avec SonarQube
   scan:
     docker:
-      - image: circleci/node:12
+      - image: circleci/node:16  # Utilisation d'une image Docker plus récente
     working_directory: /tmp/workspace
     environment:
       ENV_FILE: /tmp/workspace/.circleenv
