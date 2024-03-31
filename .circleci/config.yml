@@ -8,10 +8,7 @@ jobs:
       - run:
           name: Install npm dependencies
           command: |
-            npm install --save	
-  build_docker_image:
-    docker:
-      - image: circleci/node:12
+            npm install --save
 
 workflows:
   build_test:
