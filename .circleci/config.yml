@@ -1,39 +1,57 @@
 version: 2.1
 
-orbs:
-  sonarscanner: psl/sonarscanner@0.0.4
-
 jobs:
-  scan:
+  build:
     docker:
-      - image: circleci/node:17 
-    working_directory: /tmp/workspace
-    environment:
-      ENV_FILE: /tmp/workspace/.circleenv
-      DOCKER_BUILDKIT: "1"
-      BUILDKIT_PROGRESS: plain       
+      - image: circleci/node:13
     steps:
       - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run:
-          name: Télécharger et installer SonarQube scanner
-          command: |
-            wget -O sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-            unzip sonar-scanner.zip
-            rm sonar-scanner.zip
-      - run:
-          name: Run Sonarscanner
-          command: |
-            export PATH="$PATH:$PWD/sonar-scanner-4.6.2.2472-linux/bin"
-            sonar-scanner -h \
-            -Dsonar.projectKey=$CIRCLE_BRANCH:$CIRCLE_PROJECT_REPONAME \
-            -Dsonar.host.url=http://localhost:9000 \
-            -Dsonar.login=$SONAR_TOKEN
+      # Étapes de construction de l'application
 
-workflows: 
+  deploy-test:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Test Environment
+          command: |
+            # Étapes de déploiement vers l'environnement de test
+            echo "Deploying to Test Environment..."
+
+  deploy-staging:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Staging Environment
+          command: |
+            # Étapes de déploiement vers l'environnement de staging
+            echo "Deploying to Staging Environment..."
+
+  deploy-production:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Production Environment
+          command: |
+            # Étapes de déploiement vers l'environnement de production
+            echo "Deploying to Production Environment..."
+
+workflows:
   version: 2
-  main:
+  deploy:
     jobs:
-      - scan:
-          context: sonarqube
+      - build
+      - deploy-test:
+          requires:
+            - build
+      - deploy-staging:
+          requires:
+            - deploy-test
+      - deploy-production:
+          requires:
+            - deploy-staging
